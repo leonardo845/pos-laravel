@@ -1,0 +1,27 @@
+step 1 :
+jadi di program ini aku ingin kamu membuatkan aku program POS yang simple meliputi
+- ada master products, product_categories, product_units, product_variants, customers
+- ada tabel sales untuk mencatat dan cetak nota transaksi penjualan (harus ada status is_paid)
+- ada tabel outlets agar bisa banyak outlets sehingga di tabel sales perlu fk outlet_id
+- ada halaman untuk mengontrol produk mana yang muncul di outlet tertentu sehingga ada tabel tengah penghubung antara tabel products dan outlets
+- ada tabel users dan roles dimana roles nya adalah superadmin, owner, admin, cashier
+- roles yang tidak punya hak akses tidak dapat mengakses halaman tersebut
+- buatkan halaman login dimana user login menggunakan username & password
+- ketika user berhasil login maka akan muncul halaman dashboard
+- halaman dashboard sementara hanya berisi header, sidebar, footer saja
+- sidebar berisi dashboard, master product, product_categories, product_units, product_variants, customers, users, roles, outlets
+- gunakan bootstrap untuk design tampilannya, aku butuh tampilan yang jelas jadi untuk sementara tidak perlu yang terlalu bagus tapi yang penting jelas dan terstruktur
+
+step 2 :
+- ada stok barang
+- ada stock opname
+- stok transfer antar outlet
+
+note :
+- semua nama variabel, tabel, dan lain-lain ditulis dalam bahasa inggris
+- tiap halaman atau aksi harus ada hak akses
+- semua tabel ada timestamp & softdeletes
+- selalu gunakan lang
+- gunakan bootstrap
+- jika kamu buat migration tabel baru maka selalu buat modelnya
+- di setiap model selalu use softdeletes
