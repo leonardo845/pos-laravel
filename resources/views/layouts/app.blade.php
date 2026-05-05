@@ -73,13 +73,6 @@
             </li>
 
             <li class="nav-item">
-                <a href="{{ route('product-variants.index') }}"
-                   class="nav-link {{ request()->routeIs('product-variants.*') ? 'active' : '' }}">
-                    <i class="bi bi-collection"></i> {{ __('nav.product_variants') }}
-                </a>
-            </li>
-
-            <li class="nav-item">
                 <a href="{{ route('customers.index') }}"
                    class="nav-link {{ request()->routeIs('customers.*') ? 'active' : '' }}">
                     <i class="bi bi-people"></i> {{ __('nav.customers') }}

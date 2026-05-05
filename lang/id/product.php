@@ -13,4 +13,5 @@ return [
     'unit'               => 'Satuan',
     'buy_price'          => 'Harga Beli',
     'sell_price'         => 'Harga Jual',
+    'base_price'         => 'Harga Dasar',
 ];

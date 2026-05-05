@@ -43,8 +43,7 @@ class ProductController extends Controller
             'code'        => 'required|string|max:50|unique:products,code',
             'name'        => 'required|string|max:150',
             'description' => 'nullable|string',
-            'buy_price'   => 'required|numeric|min:0',
-            'sell_price'  => 'required|numeric|min:0',
+            'base_price'  => 'required|numeric|min:0',
             'is_active'   => 'boolean',
         ]);
 
@@ -71,8 +70,7 @@ class ProductController extends Controller
             'code'        => ['required', 'string', 'max:50', Rule::unique('products', 'code')->ignore($product->id)],
             'name'        => 'required|string|max:150',
             'description' => 'nullable|string',
-            'buy_price'   => 'required|numeric|min:0',
-            'sell_price'  => 'required|numeric|min:0',
+            'base_price'  => 'required|numeric|min:0',
             'is_active'   => 'boolean',
         ]);
 

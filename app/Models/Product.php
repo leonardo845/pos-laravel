@@ -15,14 +15,12 @@ class Product extends Model
         'code',
         'name',
         'description',
-        'buy_price',
-        'sell_price',
+        'base_price',
         'is_active',
     ];
 
     protected $casts = [
-        'buy_price'  => 'decimal:2',
-        'sell_price' => 'decimal:2',
+        'base_price' => 'decimal:2',
         'is_active'  => 'boolean',
     ];
 

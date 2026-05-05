@@ -35,6 +35,8 @@ return [
     'is_active'      => 'Aktif',
     'sku'            => 'SKU',
     'stock'          => 'Stok',
+    'min_stock'      => 'Min. Stok',
+    'back'           => 'Kembali',
 
     // Pesan flash
     'success_create' => ':name berhasil ditambahkan.',

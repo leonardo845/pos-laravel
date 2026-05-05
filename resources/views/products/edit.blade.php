@@ -66,19 +66,11 @@
 
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="buy_price" class="form-label">{{ __('product.buy_price') }}</label>
-                        <input type="number" name="buy_price" id="buy_price" min="0" step="0.01"
-                               class="form-control @error('buy_price') is-invalid @enderror"
-                               value="{{ old('buy_price', $product->buy_price) }}" required>
-                        @error('buy_price')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="sell_price" class="form-label">{{ __('product.sell_price') }}</label>
-                        <input type="number" name="sell_price" id="sell_price" min="0" step="0.01"
-                               class="form-control @error('sell_price') is-invalid @enderror"
-                               value="{{ old('sell_price', $product->sell_price) }}" required>
-                        @error('sell_price')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        <label for="base_price" class="form-label">{{ __('product.base_price') }}</label>
+                        <input type="number" name="base_price" id="base_price" min="0" step="0.01"
+                               class="form-control @error('base_price') is-invalid @enderror"
+                               value="{{ old('base_price', $product->base_price) }}" required>
+                        @error('base_price')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
 
                     <div class="mb-3 form-check">

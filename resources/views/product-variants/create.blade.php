@@ -5,7 +5,7 @@
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="mb-0">{{ __('common.add') }} {{ __('product.product_variant') }}</h4>
-    <a href="{{ route('product-variants.index') }}" class="btn btn-secondary btn-sm">{{ __('common.cancel') }}</a>
+    <a href="{{ route('product-variants.index', $productId ? ['product_id' => $productId] : []) }}" class="btn btn-secondary btn-sm">{{ __('common.cancel') }}</a>
 </div>
 
 <div class="card" style="max-width: 550px;">
@@ -44,20 +44,27 @@
             </div>
 
             <div class="mb-3">
-                <label for="price" class="form-label">{{ __('common.price') }}</label>
-                <input type="number" name="price" id="price" min="0" step="0.01"
-                       class="form-control @error('price') is-invalid @enderror"
-                       value="{{ old('price') }}">
-                <div class="form-text">Leave blank to use the product's default price.</div>
-                @error('price')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                <label for="buy_price" class="form-label">{{ __('product.buy_price') }}</label>
+                <input type="number" name="buy_price" id="buy_price" min="0" step="0.01"
+                       class="form-control @error('buy_price') is-invalid @enderror"
+                       value="{{ old('buy_price') }}">
+                @error('buy_price')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
 
             <div class="mb-3">
-                <label for="stock" class="form-label">{{ __('common.stock') }}</label>
-                <input type="number" name="stock" id="stock" min="0"
-                       class="form-control @error('stock') is-invalid @enderror"
-                       value="{{ old('stock', 0) }}" required>
-                @error('stock')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                <label for="sell_price" class="form-label">{{ __('product.sell_price') }}</label>
+                <input type="number" name="sell_price" id="sell_price" min="0" step="0.01"
+                       class="form-control @error('sell_price') is-invalid @enderror"
+                       value="{{ old('sell_price') }}">
+                @error('sell_price')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            </div>
+
+            <div class="mb-3">
+                <label for="min_stock" class="form-label">{{ __('common.min_stock') }}</label>
+                <input type="number" name="min_stock" id="min_stock" min="0"
+                       class="form-control @error('min_stock') is-invalid @enderror"
+                       value="{{ old('min_stock', 0) }}" required>
+                @error('min_stock')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
 
             <div class="mb-3 form-check">

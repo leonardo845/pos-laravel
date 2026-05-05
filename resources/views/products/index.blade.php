@@ -42,7 +42,7 @@
                         <th>{{ __('common.name') }}</th>
                         <th>{{ __('product.category') }}</th>
                         <th>{{ __('product.unit') }}</th>
-                        <th>{{ __('product.sell_price') }}</th>
+                        <th>{{ __('product.base_price') }}</th>
                         <th>{{ __('common.is_active') }}</th>
                         <th>{{ __('common.actions') }}</th>
                     </tr>
@@ -55,7 +55,7 @@
                         <td>{{ $product->name }}</td>
                         <td>{{ $product->category?->name ?? '-' }}</td>
                         <td>{{ $product->unit?->name ?? '-' }}</td>
-                        <td>{{ number_format($product->sell_price, 0, ',', '.') }}</td>
+                        <td>{{ number_format($product->base_price, 0, ',', '.') }}</td>
                         <td>
                             @if($product->is_active)
                                 <span class="badge bg-success">{{ __('common.active') }}</span>
@@ -64,6 +64,7 @@
                             @endif
                         </td>
                         <td>
+                            <a href="{{ route('product-variants.index', ['product_id' => $product->id]) }}" class="btn btn-info btn-sm">{{ __('product.product_variants') }}</a>
                             <a href="{{ route('products.edit', $product) }}" class="btn btn-warning btn-sm">{{ __('common.edit') }}</a>
                             <form method="POST" action="{{ route('products.destroy', $product) }}" class="d-inline"
                                   onsubmit="return confirm('{{ __('common.confirm_delete') }}')">

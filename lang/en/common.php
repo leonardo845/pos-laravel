@@ -35,6 +35,8 @@ return [
     'is_active'      => 'Active',
     'sku'            => 'SKU',
     'stock'          => 'Stock',
+    'min_stock'      => 'Min. Stock',
+    'back'           => 'Back',
 
     // Flash messages
     'success_create' => ':name has been created successfully.',

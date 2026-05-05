@@ -5,9 +5,12 @@
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="mb-0">{{ __('product.product_variants') }}</h4>
-    <a href="{{ route('product-variants.create') }}" class="btn btn-primary btn-sm">
-        <i class="bi bi-plus-lg"></i> {{ __('common.add') }}
-    </a>
+    <div class="d-flex gap-2">
+        <a href="{{ route('product-variants.create', $productId ? ['product_id' => $productId] : []) }}" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-lg"></i> {{ __('common.add') }}
+        </a>
+        <a href="{{ route('products.index') }}" class="btn btn-secondary btn-sm">{{ __('common.back') }}</a>
+    </div>
 </div>
 
 <div class="card">
@@ -41,8 +44,9 @@
                         <th>{{ __('product.product') }}</th>
                         <th>{{ __('common.name') }}</th>
                         <th>{{ __('common.sku') }}</th>
-                        <th>{{ __('common.price') }}</th>
-                        <th>{{ __('common.stock') }}</th>
+                        <th>{{ __('product.buy_price') }}</th>
+                        <th>{{ __('product.sell_price') }}</th>
+                        <th>{{ __('common.min_stock') }}</th>
                         <th>{{ __('common.is_active') }}</th>
                         <th>{{ __('common.actions') }}</th>
                     </tr>
@@ -54,8 +58,9 @@
                         <td>{{ $variant->product->name }}</td>
                         <td>{{ $variant->name }}</td>
                         <td>{{ $variant->sku ?? '-' }}</td>
-                        <td>{{ $variant->price !== null ? number_format($variant->price, 0, ',', '.') : '-' }}</td>
-                        <td>{{ $variant->stock }}</td>
+                        <td>{{ $variant->buy_price !== null ? number_format($variant->buy_price, 0, ',', '.') : '-' }}</td>
+                        <td>{{ $variant->sell_price !== null ? number_format($variant->sell_price, 0, ',', '.') : '-' }}</td>
+                        <td>{{ $variant->min_stock }}</td>
                         <td>
                             @if($variant->is_active)
                                 <span class="badge bg-success">{{ __('common.active') }}</span>
@@ -73,13 +78,17 @@
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="8" class="text-center text-muted">{{ __('common.no_data') }}</td></tr>
+                    <tr><td colspan="9" class="text-center text-muted">{{ __('common.no_data') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
 
         {{ $variants->links() }}
+    </div>
+</div>
+@endsection
+
     </div>
 </div>
 @endsection

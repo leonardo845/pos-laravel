@@ -41,8 +41,9 @@ class ProductVariantController extends Controller
             'product_id' => 'required|exists:products,id',
             'name'       => 'required|string|max:100',
             'sku'        => 'nullable|string|max:100|unique:product_variants,sku',
-            'price'      => 'nullable|numeric|min:0',
-            'stock'      => 'required|integer|min:0',
+            'buy_price'  => 'nullable|numeric|min:0',
+            'sell_price' => 'nullable|numeric|min:0',
+            'min_stock'  => 'required|integer|min:0',
             'is_active'  => 'boolean',
         ]);
 
@@ -50,7 +51,7 @@ class ProductVariantController extends Controller
 
         ProductVariant::create($validated);
 
-        return redirect()->route('product-variants.index')
+        return redirect()->route('product-variants.index', ['product_id' => $validated['product_id']])
             ->with('success', __('common.success_create', ['name' => __('product.product_variant')]));
     }
 
@@ -67,8 +68,9 @@ class ProductVariantController extends Controller
             'name'       => 'required|string|max:100',
             'sku'        => ['nullable', 'string', 'max:100',
                 Rule::unique('product_variants', 'sku')->ignore($productVariant->id)],
-            'price'      => 'nullable|numeric|min:0',
-            'stock'      => 'required|integer|min:0',
+            'buy_price'  => 'nullable|numeric|min:0',
+            'sell_price' => 'nullable|numeric|min:0',
+            'min_stock'  => 'required|integer|min:0',
             'is_active'  => 'boolean',
         ]);
 
@@ -76,15 +78,16 @@ class ProductVariantController extends Controller
 
         $productVariant->update($validated);
 
-        return redirect()->route('product-variants.index')
+        return redirect()->route('product-variants.index', ['product_id' => $productVariant->product_id])
             ->with('success', __('common.success_update', ['name' => __('product.product_variant')]));
     }
 
     public function destroy(ProductVariant $productVariant)
     {
+        $productId = $productVariant->product_id;
         $productVariant->delete();
 
-        return redirect()->route('product-variants.index')
+        return redirect()->route('product-variants.index', ['product_id' => $productId])
             ->with('success', __('common.success_delete', ['name' => __('product.product_variant')]));
     }
 }

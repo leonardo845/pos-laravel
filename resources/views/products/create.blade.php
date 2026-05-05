@@ -23,7 +23,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="name" class="form-label">{{ __('common.name') }}</label>
+                        <label for="name" class="form-label">{{ __('common.name') }} <span class="text-danger">*</span></label>
                         <input type="text" name="name" id="name"
                                class="form-control @error('name') is-invalid @enderror"
                                value="{{ old('name') }}" required>
@@ -31,7 +31,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="category_id" class="form-label">{{ __('product.category') }}</label>
+                        <label for="category_id" class="form-label">{{ __('product.category') }} <span class="text-danger">*</span></label>
                         <select name="category_id" id="category_id" class="form-select @error('category_id') is-invalid @enderror">
                             <option value="">-- {{ __('product.category') }} --</option>
                             @foreach($categories as $cat)
@@ -44,7 +44,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="unit_id" class="form-label">{{ __('product.unit') }}</label>
+                        <label for="unit_id" class="form-label">{{ __('product.unit') }} <span class="text-danger">*</span></label>
                         <select name="unit_id" id="unit_id" class="form-select @error('unit_id') is-invalid @enderror">
                             <option value="">-- {{ __('product.unit') }} --</option>
                             @foreach($units as $unit)
@@ -66,19 +66,11 @@
 
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="buy_price" class="form-label">{{ __('product.buy_price') }}</label>
-                        <input type="number" name="buy_price" id="buy_price" min="0" step="0.01"
-                               class="form-control @error('buy_price') is-invalid @enderror"
-                               value="{{ old('buy_price', 0) }}" required>
-                        @error('buy_price')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="sell_price" class="form-label">{{ __('product.sell_price') }}</label>
-                        <input type="number" name="sell_price" id="sell_price" min="0" step="0.01"
-                               class="form-control @error('sell_price') is-invalid @enderror"
-                               value="{{ old('sell_price', 0) }}" required>
-                        @error('sell_price')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        <label for="base_price" class="form-label">{{ __('product.base_price') }} <span class="text-danger">*</span></label>
+                        <input type="number" name="base_price" id="base_price" min="0" step="0.01"
+                               class="form-control @error('base_price') is-invalid @enderror"
+                               value="{{ old('base_price', 0) }}" required>
+                        @error('base_price')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
 
                     <div class="mb-3 form-check">

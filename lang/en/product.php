@@ -13,4 +13,5 @@ return [
     'unit'               => 'Unit',
     'buy_price'          => 'Buy Price',
     'sell_price'         => 'Sell Price',
+    'base_price'         => 'Base Price',
 ];

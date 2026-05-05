@@ -13,14 +13,16 @@ class ProductVariant extends Model
         'product_id',
         'name',
         'sku',
-        'price',
-        'stock',
+        'buy_price',
+        'sell_price',
+        'min_stock',
         'is_active',
     ];
 
     protected $casts = [
-        'price'     => 'decimal:2',
-        'is_active' => 'boolean',
+        'buy_price'  => 'decimal:2',
+        'sell_price' => 'decimal:2',
+        'is_active'  => 'boolean',
     ];
 
     public function product()
