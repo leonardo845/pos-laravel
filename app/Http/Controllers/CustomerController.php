@@ -12,7 +12,8 @@ class CustomerController extends Controller
     {
         $search = $request->get('search');
 
-        $customers = Customer::when($search, fn ($q) => $q->where('name', 'like', "%{$search}%")
+        $customers = Customer::select('id', 'name', 'phone', 'email', 'address')
+            ->when($search, fn ($q) => $q->where('name', 'like', "%{$search}%")
                 ->orWhere('phone', 'like', "%{$search}%"))
             ->orderBy('name')
             ->paginate(10)

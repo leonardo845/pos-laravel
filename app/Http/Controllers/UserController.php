@@ -13,7 +13,8 @@ class UserController extends Controller
     {
         $search = $request->get('search');
 
-        $users = User::with('role')
+        $users = User::select('id', 'name', 'username', 'role_id')
+            ->with('role:id,name')
             ->when($search, fn ($q) => $q->where('name', 'like', "%{$search}%")
                 ->orWhere('username', 'like', "%{$search}%"))
             ->orderBy('name')
@@ -25,7 +26,7 @@ class UserController extends Controller
 
     public function create()
     {
-        $roles = Role::orderBy('name')->get();
+        $roles = Role::select('id', 'name')->orderBy('name')->get();
         return view('users.create', compact('roles'));
     }
 
@@ -46,7 +47,7 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $roles = Role::orderBy('name')->get();
+        $roles = Role::select('id', 'name')->orderBy('name')->get();
         return view('users.edit', compact('user', 'roles'));
     }
 

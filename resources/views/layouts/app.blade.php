@@ -17,6 +17,7 @@
         .content-wrapper { flex: 1; overflow-x: auto; }
         .main-wrapper { display: flex; }
     </style>
+    @stack('styles')
 </head>
 <body>
 

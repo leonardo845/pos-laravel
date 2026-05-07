@@ -14,7 +14,8 @@ class ProductVariantController extends Controller
         $search    = $request->get('search');
         $productId = $request->get('product_id');
 
-        $variants = ProductVariant::with('product')
+        $variants = ProductVariant::select('id', 'product_id', 'name', 'sku', 'buy_price', 'sell_price', 'min_stock', 'is_active')
+            ->with('product:id,name')
             ->when($search, fn ($q) => $q->where('name', 'like', "%{$search}%")
                 ->orWhere('sku', 'like', "%{$search}%"))
             ->when($productId, fn ($q) => $q->where('product_id', $productId))
@@ -23,14 +24,14 @@ class ProductVariantController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        $products = Product::orderBy('name')->get();
+        $products = Product::select('id', 'name')->orderBy('name')->get();
 
         return view('product-variants.index', compact('variants', 'products', 'search', 'productId'));
     }
 
     public function create(Request $request)
     {
-        $products   = Product::orderBy('name')->get();
+        $products   = Product::select('id', 'name')->orderBy('name')->get();
         $productId  = $request->get('product_id');
         return view('product-variants.create', compact('products', 'productId'));
     }
@@ -57,7 +58,7 @@ class ProductVariantController extends Controller
 
     public function edit(ProductVariant $productVariant)
     {
-        $products = Product::orderBy('name')->get();
+        $products = Product::select('id', 'name')->orderBy('name')->get();
         return view('product-variants.edit', compact('productVariant', 'products'));
     }
 

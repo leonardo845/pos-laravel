@@ -12,7 +12,8 @@ class ProductCategoryController extends Controller
     {
         $search = $request->get('search');
 
-        $categories = ProductCategory::withCount('products')
+        $categories = ProductCategory::select('id', 'name')
+            ->withCount('products')
             ->when($search, fn ($q) => $q->where('name', 'like', "%{$search}%"))
             ->orderBy('name')
             ->paginate(10)

@@ -12,7 +12,8 @@ class ProductUnitController extends Controller
     {
         $search = $request->get('search');
 
-        $units = ProductUnit::withCount('products')
+        $units = ProductUnit::select('id', 'name')
+            ->withCount('products')
             ->when($search, fn ($q) => $q->where('name', 'like', "%{$search}%"))
             ->orderBy('name')
             ->paginate(10)

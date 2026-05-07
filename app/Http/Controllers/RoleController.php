@@ -12,7 +12,8 @@ class RoleController extends Controller
     {
         $search = $request->get('search');
 
-        $roles = Role::when($search, fn ($q) => $q->where('name', 'like', "%{$search}%"))
+        $roles = Role::select('id', 'name', 'slug')
+            ->when($search, fn ($q) => $q->where('name', 'like', "%{$search}%"))
             ->withCount('users')
             ->orderBy('name')
             ->paginate(10)

@@ -14,7 +14,8 @@ class OutletController extends Controller
     {
         $search = $request->get('search');
 
-        $outlets = Outlet::when($search, fn ($q) => $q->where('name', 'like', "%{$search}%"))
+        $outlets = Outlet::select('id', 'name', 'phone', 'email', 'is_active')
+            ->when($search, fn ($q) => $q->where('name', 'like', "%{$search}%"))
             ->orderBy('name')
             ->paginate(10)
             ->withQueryString();
@@ -78,7 +79,8 @@ class OutletController extends Controller
 
     public function products(Outlet $outlet)
     {
-        $products = Product::with('category')
+        $products = Product::select('id', 'code', 'name', 'category_id')
+            ->with('category:id,name')
             ->where('is_active', true)
             ->orderBy('name')
             ->get();
