@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductUnit;
 use App\Models\ProductVariant;
+use App\Models\ProductVariantPrice;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Yajra\DataTables\Facades\DataTables;
@@ -17,14 +18,14 @@ class ProductController extends Controller
         if ($request->ajax()) {
             $categoryId = $request->get('category_id');
 
-            $query = Product::select('id', 'code', 'name', 'category_id', 'unit_id', 'base_price', 'is_active')
-                ->with(['category:id,name', 'unit:id,name'])
+            $query = Product::select('id', 'code', 'name', 'category_id', 'min_price', 'is_active')
+                ->with(['category:id,name'])
                 ->when($categoryId, fn ($q) => $q->where('category_id', $categoryId));
 
             return DataTables::of($query)
+                ->addIndexColumn()
                 ->addColumn('category_name', fn ($row) => $row->category?->name ?? '-')
-                ->addColumn('unit_name', fn ($row) => $row->unit?->name ?? '-')
-                ->editColumn('base_price', fn ($row) => number_format($row->base_price, 0, ',', '.'))
+                ->editColumn('min_price', fn ($row) => number_format($row->min_price, 0, ',', '.'))
                 ->editColumn('is_active', fn ($row) => $row->is_active
                     ? '<span class="badge bg-success">' . __('common.active') . '</span>'
                     : '<span class="badge bg-secondary">' . __('common.inactive') . '</span>')
@@ -54,41 +55,47 @@ class ProductController extends Controller
     {
         $categories = ProductCategory::select('id', 'name')->orderBy('name')->get();
         $units      = ProductUnit::select('id', 'name')->orderBy('name')->get();
-        return view('products.create', compact('categories', 'units'));
+        return view('products.form', compact('categories', 'units'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'category_id'            => 'nullable|exists:product_categories,id',
-            'unit_id'                => 'nullable|exists:product_units,id',
-            'code'                   => 'required|string|max:50|unique:products,code',
-            'name'                   => 'required|string|max:150',
-            'description'            => 'nullable|string',
-            'base_price'             => 'required|numeric|min:0',
-            'is_active'              => 'boolean',
-            'variants'               => 'nullable|array',
-            'variants.*.name'        => 'required|string|max:100',
-            'variants.*.sku'         => 'nullable|string|max:100',
-            'variants.*.buy_price'   => 'nullable|numeric|min:0',
-            'variants.*.sell_price'  => 'nullable|numeric|min:0',
-            'variants.*.min_stock'   => 'nullable|integer|min:0',
+            'category_id'          => 'nullable|exists:product_categories,id',
+            'code'                 => 'required|string|max:50|unique:products,code',
+            'name'                 => 'required|string|max:150',
+            'description'          => 'nullable|string',
+            'min_price'            => 'required|numeric|min:0',
+            'is_active'            => 'boolean',
+            'unit_ids'             => 'nullable|array',
+            'unit_ids.*'           => 'integer|exists:product_units,id',
+            'variants'             => 'nullable|array',
+            'variants.*.name'      => 'required|string|max:100',
+            'variants.*.sku'       => 'nullable|string|max:100',
+            'variants.*.prices'    => 'nullable|array',
+            'variants.*.prices.*'  => 'nullable|numeric|min:0',
         ]);
 
         $validated['is_active'] = $request->boolean('is_active', true);
 
         $product = Product::create($validated);
 
+        $unitIds = $request->input('unit_ids', []);
+        $product->units()->sync($unitIds);
+
         foreach ($request->input('variants', []) as $v) {
             if (empty($v['name'])) continue;
-            $product->variants()->create([
-                'name'       => $v['name'],
-                'sku'        => $v['sku'] ?: null,
-                'buy_price'  => $v['buy_price'] ?: null,
-                'sell_price' => $v['sell_price'] ?: null,
-                'min_stock'  => (int) ($v['min_stock'] ?? 0),
-                'is_active'  => (bool) ($v['is_active'] ?? false),
+            $variant = $product->variants()->create([
+                'name'      => $v['name'],
+                'sku'       => $v['sku'] ?: null,
+                'is_active' => (bool) ($v['is_active'] ?? false),
             ]);
+            foreach ($unitIds as $unitId) {
+                $variant->prices()->create([
+                    'product_unit_id' => $unitId,
+                    'price'           => $v['prices'][$unitId] ?? 0,
+                ]);
+            }
         }
 
         return redirect()->route('products.index')
@@ -99,35 +106,42 @@ class ProductController extends Controller
     {
         $categories = ProductCategory::select('id', 'name')->orderBy('name')->get();
         $units      = ProductUnit::select('id', 'name')->orderBy('name')->get();
-        $product->load(['variants' => fn ($q) => $q->select('id', 'product_id', 'name', 'sku', 'buy_price', 'sell_price', 'min_stock', 'is_active')]);
-        return view('products.edit', compact('product', 'categories', 'units'));
+        $product->load([
+            'units:id,name',
+            'variants' => fn ($q) => $q->select('id', 'product_id', 'name', 'sku', 'is_active'),
+            'variants.prices',
+        ]);
+        return view('products.form', compact('product', 'categories', 'units'));
     }
 
     public function update(Request $request, Product $product)
     {
         $validated = $request->validate([
-            'category_id'            => 'nullable|exists:product_categories,id',
-            'unit_id'                => 'nullable|exists:product_units,id',
-            'code'                   => ['required', 'string', 'max:50', Rule::unique('products', 'code')->ignore($product->id)],
-            'name'                   => 'required|string|max:150',
-            'description'            => 'nullable|string',
-            'base_price'             => 'required|numeric|min:0',
-            'is_active'              => 'boolean',
-            'variants'               => 'nullable|array',
-            'variants.*.name'        => 'required|string|max:100',
-            'variants.*.sku'         => 'nullable|string|max:100',
-            'variants.*.buy_price'   => 'nullable|numeric|min:0',
-            'variants.*.sell_price'  => 'nullable|numeric|min:0',
-            'variants.*.min_stock'   => 'nullable|integer|min:0',
-            'deleted_variant_ids'    => 'nullable|array',
-            'deleted_variant_ids.*'  => 'nullable|integer',
+            'category_id'          => 'nullable|exists:product_categories,id',
+            'code'                 => ['required', 'string', 'max:50', Rule::unique('products', 'code')->ignore($product->id)],
+            'name'                 => 'required|string|max:150',
+            'description'          => 'nullable|string',
+            'min_price'            => 'required|numeric|min:0',
+            'is_active'            => 'boolean',
+            'unit_ids'             => 'nullable|array',
+            'unit_ids.*'           => 'integer|exists:product_units,id',
+            'variants'             => 'nullable|array',
+            'variants.*.name'      => 'required|string|max:100',
+            'variants.*.sku'       => 'nullable|string|max:100',
+            'variants.*.prices'    => 'nullable|array',
+            'variants.*.prices.*'  => 'nullable|numeric|min:0',
+            'deleted_variant_ids'   => 'nullable|array',
+            'deleted_variant_ids.*' => 'nullable|integer',
         ]);
 
         $validated['is_active'] = $request->boolean('is_active', true);
 
         $product->update($validated);
 
-        // Delete removed variants
+        $unitIds = $request->input('unit_ids', []);
+        $product->units()->sync($unitIds);
+
+        // Delete removed variants (cascades to their prices)
         $deletedIds = array_filter((array) $request->input('deleted_variant_ids', []));
         if ($deletedIds) {
             ProductVariant::whereIn('id', $deletedIds)
@@ -135,23 +149,39 @@ class ProductController extends Controller
                 ->delete();
         }
 
-        // Update existing or create new variants
+        // Remove prices for units no longer attached to this product
+        if ($unitIds) {
+            ProductVariantPrice::whereHas('variant', fn ($q) => $q->where('product_id', $product->id))
+                ->whereNotIn('product_unit_id', $unitIds)
+                ->delete();
+        } else {
+            ProductVariantPrice::whereHas('variant', fn ($q) => $q->where('product_id', $product->id))
+                ->delete();
+        }
+
+        // Update existing or create new variants, then upsert prices
         foreach ($request->input('variants', []) as $v) {
             if (empty($v['name'])) continue;
             $data = [
-                'name'       => $v['name'],
-                'sku'        => $v['sku'] ?: null,
-                'buy_price'  => $v['buy_price'] ?: null,
-                'sell_price' => $v['sell_price'] ?: null,
-                'min_stock'  => (int) ($v['min_stock'] ?? 0),
-                'is_active'  => (bool) ($v['is_active'] ?? false),
+                'name'      => $v['name'],
+                'sku'       => $v['sku'] ?: null,
+                'is_active' => (bool) ($v['is_active'] ?? false),
             ];
             if (!empty($v['id'])) {
                 ProductVariant::where('id', $v['id'])
                     ->where('product_id', $product->id)
                     ->update($data);
+                $variantId = (int) $v['id'];
             } else {
-                $product->variants()->create($data);
+                $variant   = $product->variants()->create($data);
+                $variantId = $variant->id;
+            }
+
+            foreach ($unitIds as $unitId) {
+                ProductVariantPrice::updateOrCreate(
+                    ['product_variant_id' => $variantId, 'product_unit_id' => $unitId],
+                    ['price' => $v['prices'][$unitId] ?? 0]
+                );
             }
         }
 

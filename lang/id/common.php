@@ -37,6 +37,7 @@ return [
     'stock'          => 'Stok',
     'min_stock'      => 'Min. Stok',
     'back'           => 'Kembali',
+    'numbering'      => 'No',
 
     // Pesan flash
     'success_create' => ':name berhasil ditambahkan.',

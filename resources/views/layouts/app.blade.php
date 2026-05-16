@@ -49,7 +49,7 @@
 
             @if(Auth::user()->hasRole(['superadmin','owner','admin']))
             <li class="mt-2">
-                <span class="sidebar-heading">{{ __('nav.master_product') }}</span>
+                <span class="sidebar-heading">{{ __('nav.products') }}</span>
             </li>
 
             <li class="nav-item">
@@ -62,21 +62,14 @@
             <li class="nav-item">
                 <a href="{{ route('product-categories.index') }}"
                    class="nav-link {{ request()->routeIs('product-categories.*') ? 'active' : '' }}">
-                    <i class="bi bi-tags"></i> {{ __('nav.product_categories') }}
+                    <i class="bi bi-tags"></i> {{ __('nav.categories') }}
                 </a>
             </li>
 
             <li class="nav-item">
                 <a href="{{ route('product-units.index') }}"
                    class="nav-link {{ request()->routeIs('product-units.*') ? 'active' : '' }}">
-                    <i class="bi bi-rulers"></i> {{ __('nav.product_units') }}
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a href="{{ route('customers.index') }}"
-                   class="nav-link {{ request()->routeIs('customers.*') ? 'active' : '' }}">
-                    <i class="bi bi-people"></i> {{ __('nav.customers') }}
+                    <i class="bi bi-rulers"></i> {{ __('nav.units') }}
                 </a>
             </li>
             @endif
@@ -95,7 +88,7 @@
 
             @if(Auth::user()->hasRole('superadmin'))
             <li class="mt-2">
-                <span class="sidebar-heading">Admin</span>
+                <span class="sidebar-heading">{{ __('nav.general') }}</span>
             </li>
             <li class="nav-item">
                 <a href="{{ route('users.index') }}"
@@ -107,6 +100,19 @@
                 <a href="{{ route('roles.index') }}"
                    class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}">
                     <i class="bi bi-shield-lock"></i> {{ __('nav.roles') }}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('suppliers.index') }}"
+                   class="nav-link {{ request()->routeIs('suppliers.*') ? 'active' : '' }}">
+                    <i class="bi bi-truck"></i> {{ __('nav.suppliers') }}
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ route('customers.index') }}"
+                   class="nav-link {{ request()->routeIs('customers.*') ? 'active' : '' }}">
+                    <i class="bi bi-people"></i> {{ __('nav.customers') }}
                 </a>
             </li>
             @endif

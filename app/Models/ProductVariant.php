@@ -13,16 +13,11 @@ class ProductVariant extends Model
         'product_id',
         'name',
         'sku',
-        'buy_price',
-        'sell_price',
-        'min_stock',
         'is_active',
     ];
 
     protected $casts = [
-        'buy_price'  => 'decimal:2',
-        'sell_price' => 'decimal:2',
-        'is_active'  => 'boolean',
+        'is_active' => 'boolean',
     ];
 
     public function product()
@@ -32,7 +27,7 @@ class ProductVariant extends Model
 
     public function prices()
     {
-        return $this->hasMany(VariantPrice::class, 'variant_id');
+        return $this->hasMany(ProductVariantPrice::class, 'product_variant_id');
     }
 
     public function stockMovements()

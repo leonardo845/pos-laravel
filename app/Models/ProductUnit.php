@@ -13,6 +13,6 @@ class ProductUnit extends Model
 
     public function products()
     {
-        return $this->hasMany(Product::class, 'unit_id');
+        return $this->belongsToMany(Product::class, 'product_product_unit', 'product_unit_id', 'product_id');
     }
 }

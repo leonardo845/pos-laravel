@@ -25,7 +25,7 @@ class OutletController extends Controller
 
     public function create()
     {
-        return view('outlets.create');
+        return view('outlets.form');
     }
 
     public function store(Request $request)
@@ -48,7 +48,7 @@ class OutletController extends Controller
 
     public function edit(Outlet $outlet)
     {
-        return view('outlets.edit', compact('outlet'));
+        return view('outlets.form', compact('outlet'));
     }
 
     public function update(Request $request, Outlet $outlet)

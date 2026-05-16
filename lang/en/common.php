@@ -37,6 +37,7 @@ return [
     'stock'          => 'Stock',
     'min_stock'      => 'Min. Stock',
     'back'           => 'Back',
+    'numbering'      => 'No',
 
     // Flash messages
     'success_create' => ':name has been created successfully.',

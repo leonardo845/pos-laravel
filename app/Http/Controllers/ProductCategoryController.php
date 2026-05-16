@@ -24,7 +24,7 @@ class ProductCategoryController extends Controller
 
     public function create()
     {
-        return view('product-categories.create');
+        return view('product-categories.form');
     }
 
     public function store(Request $request)
@@ -41,7 +41,7 @@ class ProductCategoryController extends Controller
 
     public function edit(ProductCategory $productCategory)
     {
-        return view('product-categories.edit', compact('productCategory'));
+        return view('product-categories.form', compact('productCategory'));
     }
 
     public function update(Request $request, ProductCategory $productCategory)

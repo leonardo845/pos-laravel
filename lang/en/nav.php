@@ -11,4 +11,6 @@ return [
     'users'              => 'Users',
     'roles'              => 'Roles',
     'outlets'            => 'Outlets',
+    'general'            => 'General',
+    'suppliers'          => 'Suppliers',
 ];

@@ -11,17 +11,16 @@ class Product extends Model
 
     protected $fillable = [
         'category_id',
-        'unit_id',
         'code',
         'name',
         'description',
-        'base_price',
+        'min_price',
         'is_active',
     ];
 
     protected $casts = [
-        'base_price' => 'decimal:2',
-        'is_active'  => 'boolean',
+        'min_price' => 'decimal:2',
+        'is_active' => 'boolean',
     ];
 
     public function category()
@@ -29,9 +28,9 @@ class Product extends Model
         return $this->belongsTo(ProductCategory::class, 'category_id');
     }
 
-    public function unit()
+    public function units()
     {
-        return $this->belongsTo(ProductUnit::class, 'unit_id');
+        return $this->belongsToMany(ProductUnit::class, 'product_product_unit', 'product_id', 'product_unit_id');
     }
 
     public function variants()

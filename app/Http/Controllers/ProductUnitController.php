@@ -24,7 +24,7 @@ class ProductUnitController extends Controller
 
     public function create()
     {
-        return view('product-units.create');
+        return view('product-units.form');
     }
 
     public function store(Request $request)
@@ -41,7 +41,7 @@ class ProductUnitController extends Controller
 
     public function edit(ProductUnit $productUnit)
     {
-        return view('product-units.edit', compact('productUnit'));
+        return view('product-units.form', compact('productUnit'));
     }
 
     public function update(Request $request, ProductUnit $productUnit)

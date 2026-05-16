@@ -34,11 +34,10 @@
             <table id="productsTable" class="table table-bordered table-hover table-sm w-100">
                 <thead class="table-dark">
                     <tr>
-                        <th>{{ __('common.code') }}</th>
+                        <th>{{ __('common.numbering') }}</th>
                         <th>{{ __('common.name') }}</th>
                         <th>{{ __('product.category') }}</th>
-                        <th>{{ __('product.unit') }}</th>
-                        <th>{{ __('product.base_price') }}</th>
+                        <th>{{ __('product.min_price') }}</th>
                         <th>{{ __('common.is_active') }}</th>
                         <th>{{ __('common.actions') }}</th>
                     </tr>
@@ -65,11 +64,10 @@ $(function () {
             }
         },
         columns: [
-            { data: 'code',          name: 'code' },
+            { data: 'DT_RowIndex',   name: 'DT_RowIndex',   orderable: false, searchable: false },
             { data: 'name',          name: 'name' },
             { data: 'category_name', name: 'category_name', orderable: false, searchable: false },
-            { data: 'unit_name',     name: 'unit_name',     orderable: false, searchable: false },
-            { data: 'base_price',    name: 'base_price' },
+            { data: 'min_price',     name: 'min_price' },
             { data: 'is_active',     name: 'is_active',     orderable: false, searchable: false },
             { data: 'actions',       name: 'actions',       orderable: false, searchable: false },
         ],

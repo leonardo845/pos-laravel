@@ -24,7 +24,7 @@ class RoleController extends Controller
 
     public function create()
     {
-        return view('roles.create');
+        return view('roles.form');
     }
 
     public function store(Request $request)
@@ -42,7 +42,7 @@ class RoleController extends Controller
 
     public function edit(Role $role)
     {
-        return view('roles.edit', compact('role'));
+        return view('roles.form', compact('role'));
     }
 
     public function update(Request $request, Role $role)
