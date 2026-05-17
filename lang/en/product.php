@@ -16,4 +16,12 @@ return [
     'sell_price'         => 'Sell Price',
     'min_price'          => 'Minimum Price',
     'max_price'          => 'Maximum Price',
+    'variant_prices'     => 'Variant Prices',
+    'barcode'            => 'Barcode',
+    'barcode_auto'       => 'Auto generated',
+    'stock'              => 'Stock',
+    'track_stock'        => 'Track Stock',
+    'attributes'         => 'Attributes',
+    'modifier_groups'         => 'Additional Options',
+    'select_modifier_group'   => 'Select Option Group',
 ];

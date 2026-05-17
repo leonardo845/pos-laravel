@@ -7,6 +7,7 @@ return [
     'product_categories' => 'Product Categories',
     'product_units'      => 'Product Units',
     'product_variants'   => 'Product Variants',
+    'modifier_groups'    => 'Additional Options',
     'customers'          => 'Customers',
     'users'              => 'Users',
     'roles'              => 'Roles',

@@ -3,10 +3,11 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ModifierGroupController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ProductUnitController;
+use App\Http\Controllers\UnitController;
 use App\Http\Controllers\ProductVariantController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SupplierController;
@@ -42,8 +43,9 @@ Route::middleware('auth')->group(function () {
     // Superadmin, owner & admin: master data
     Route::middleware('role:superadmin,owner,admin')->group(function () {
         Route::resource('product-categories', ProductCategoryController::class)->except(['show']);
-        Route::resource('product-units', ProductUnitController::class)->except(['show']);
+        Route::resource('units', UnitController::class)->except(['show']);
         Route::resource('products', ProductController::class)->except(['show']);
+        Route::resource('modifier-groups', ModifierGroupController::class)->except(['show']);
         Route::resource('customers', CustomerController::class)->except(['show']);
     });
 });

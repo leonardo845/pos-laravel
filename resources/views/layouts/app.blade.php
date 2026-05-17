@@ -67,9 +67,16 @@
             </li>
 
             <li class="nav-item">
-                <a href="{{ route('product-units.index') }}"
-                   class="nav-link {{ request()->routeIs('product-units.*') ? 'active' : '' }}">
+                <a href="{{ route('units.index') }}"
+                   class="nav-link {{ request()->routeIs('units.*') ? 'active' : '' }}">
                     <i class="bi bi-rulers"></i> {{ __('nav.units') }}
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ route('modifier-groups.index') }}"
+                   class="nav-link {{ request()->routeIs('modifier-groups.*') ? 'active' : '' }}">
+                    <i class="bi bi-sliders"></i> {{ __('nav.modifier_groups') }}
                 </a>
             </li>
             @endif

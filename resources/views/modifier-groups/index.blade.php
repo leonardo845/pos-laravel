@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', __('product.product_units'))
+@section('title', __('modifier.additional_options'))
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="mb-0">{{ __('product.product_units') }}</h4>
-    <a href="{{ route('product-units.create') }}" class="btn btn-primary btn-sm">
+    <h4 class="mb-0">{{ __('modifier.additional_options') }}</h4>
+    <a href="{{ route('modifier-groups.create') }}" class="btn btn-primary btn-sm">
         <i class="bi bi-plus-lg"></i> {{ __('common.add') }}
     </a>
 </div>
@@ -19,7 +19,7 @@
             </div>
             <div class="col-auto">
                 <button type="submit" class="btn btn-secondary btn-sm">{{ __('common.search') }}</button>
-                <a href="{{ route('product-units.index') }}" class="btn btn-outline-secondary btn-sm">{{ __('common.reset') }}</a>
+                <a href="{{ route('modifier-groups.index') }}" class="btn btn-outline-secondary btn-sm">{{ __('common.reset') }}</a>
             </div>
         </form>
 
@@ -29,19 +29,21 @@
                     <tr>
                         <th>#</th>
                         <th>{{ __('common.name') }}</th>
-                        <th>{{ __('product.products') }}</th>
+                        <th>{{ __('modifier.min_selection') }}</th>
+                        <th>{{ __('modifier.modifiers_count') }}</th>
                         <th>{{ __('common.actions') }}</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($units as $unit)
+                    @forelse($groups as $group)
                     <tr>
-                        <td>{{ $units->firstItem() + $loop->index }}</td>
-                        <td>{{ $unit->name }}</td>
-                        <td>{{ $unit->products_count }}</td>
+                        <td>{{ $groups->firstItem() + $loop->index }}</td>
+                        <td>{{ $group->name }}</td>
+                        <td>{{ $group->min_selection }}</td>
+                        <td>{{ $group->modifiers_count }}</td>
                         <td>
-                            <a href="{{ route('product-units.edit', $unit) }}" class="btn btn-warning btn-sm">{{ __('common.edit') }}</a>
-                            <form method="POST" action="{{ route('product-units.destroy', $unit) }}" class="d-inline"
+                            <a href="{{ route('modifier-groups.edit', $group) }}" class="btn btn-warning btn-sm">{{ __('common.edit') }}</a>
+                            <form method="POST" action="{{ route('modifier-groups.destroy', $group) }}" class="d-inline"
                                   onsubmit="return confirm('{{ __('common.confirm_delete') }}')">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm">{{ __('common.delete') }}</button>
@@ -49,13 +51,13 @@
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="4" class="text-center text-muted">{{ __('common.no_data') }}</td></tr>
+                    <tr><td colspan="5" class="text-center text-muted">{{ __('common.no_data') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
 
-        {{ $units->links() }}
+        {{ $groups->links() }}
     </div>
 </div>
 @endsection

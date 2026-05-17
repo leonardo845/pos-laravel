@@ -13,12 +13,24 @@ class ProductVariant extends Model
         'product_id',
         'name',
         'sku',
+        'barcode',
+        'stock',
+        'is_stock_tracked',
+        'attributes',
         'is_active',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean',
+        'is_active'        => 'boolean',
+        'is_stock_tracked' => 'boolean',
+        'stock'            => 'decimal:2',
+        'attributes'       => 'array',
     ];
+
+    public function variantModifiers()
+    {
+        return $this->hasMany(ProductVariantModifier::class, 'product_variant_id');
+    }
 
     public function product()
     {

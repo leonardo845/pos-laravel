@@ -30,7 +30,7 @@ class Product extends Model
 
     public function units()
     {
-        return $this->belongsToMany(ProductUnit::class, 'product_product_unit', 'product_id', 'product_unit_id');
+        return $this->belongsToMany(Unit::class, 'product_unit', 'product_id', 'unit_id');
     }
 
     public function variants()
@@ -48,5 +48,10 @@ class Product extends Model
     public function outletProducts()
     {
         return $this->hasMany(OutletProduct::class);
+    }
+
+    public function modifierGroups()
+    {
+        return $this->belongsToMany(ModifierGroup::class, 'product_modifier_group');
     }
 }

@@ -23,6 +23,6 @@ class VariantPrice extends Model
 
     public function unit()
     {
-        return $this->belongsTo(ProductUnit::class, 'unit_id');
+        return $this->belongsTo(Unit::class, 'unit_id');
     }
 }

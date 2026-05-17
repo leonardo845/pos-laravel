@@ -3,7 +3,7 @@
 return [
     'login'            => 'Masuk',
     'logout'           => 'Keluar',
-    'username'         => 'Nama Pengguna',
+    'username'         => 'Username',
     'password'         => 'Kata Sandi',
     'password_confirm' => 'Konfirmasi Kata Sandi',
     'remember_me'      => 'Ingat Saya',

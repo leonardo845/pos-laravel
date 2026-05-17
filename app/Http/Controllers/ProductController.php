@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Modifier;
+use App\Models\ModifierGroup;
 use App\Models\Product;
 use App\Models\ProductCategory;
-use App\Models\ProductUnit;
+use App\Models\Unit;
 use App\Models\ProductVariant;
+use App\Models\ProductVariantModifier;
 use App\Models\ProductVariantPrice;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -53,9 +56,10 @@ class ProductController extends Controller
 
     public function create()
     {
-        $categories = ProductCategory::select('id', 'name')->orderBy('name')->get();
-        $units      = ProductUnit::select('id', 'name')->orderBy('name')->get();
-        return view('products.form', compact('categories', 'units'));
+        $categories     = ProductCategory::select('id', 'name')->orderBy('name')->get();
+        $units          = Unit::select('id', 'name')->orderBy('name')->get();
+        $modifierGroups = ModifierGroup::with('modifiers')->orderBy('name')->get();
+        return view('products.form', compact('categories', 'units', 'modifierGroups'));
     }
 
     public function store(Request $request)
@@ -68,12 +72,16 @@ class ProductController extends Controller
             'min_price'            => 'required|numeric|min:0',
             'is_active'            => 'boolean',
             'unit_ids'             => 'nullable|array',
-            'unit_ids.*'           => 'integer|exists:product_units,id',
+            'unit_ids.*'           => 'integer|exists:units,id',
             'variants'             => 'nullable|array',
             'variants.*.name'      => 'required|string|max:100',
             'variants.*.sku'       => 'nullable|string|max:100',
+            'variants.*.barcode'   => 'nullable|string|max:100',
+            'variants.*.stock'     => 'nullable|numeric|min:0',
             'variants.*.prices'    => 'nullable|array',
             'variants.*.prices.*'  => 'nullable|numeric|min:0',
+            'modifier_group_ids'   => 'nullable|array',
+            'modifier_group_ids.*' => 'integer|exists:modifier_groups,id',
         ]);
 
         $validated['is_active'] = $request->boolean('is_active', true);
@@ -82,21 +90,38 @@ class ProductController extends Controller
 
         $unitIds = $request->input('unit_ids', []);
         $product->units()->sync($unitIds);
+        $allModifiers     = Modifier::select('id', 'modifier_group_id')->get()->keyBy('id');
+        $modifierGroupIds = [];
 
         foreach ($request->input('variants', []) as $v) {
             if (empty($v['name'])) continue;
             $variant = $product->variants()->create([
-                'name'      => $v['name'],
-                'sku'       => $v['sku'] ?: null,
-                'is_active' => (bool) ($v['is_active'] ?? false),
+                'name'             => $v['name'],
+                'sku'              => $v['sku'] ?: null,
+                'barcode'          => !empty($v['barcode_auto']) ? $this->generateBarcode() : ($v['barcode'] ?: null),
+                'stock'            => $v['stock'] ?? 0,
+                'is_stock_tracked' => (bool) ($v['is_stock_tracked'] ?? false),
+                'attributes'       => !empty($v['attributes']) ? json_decode($v['attributes'], true) : null,
+                'is_active'        => (bool) ($v['is_active'] ?? false),
             ]);
             foreach ($unitIds as $unitId) {
                 $variant->prices()->create([
-                    'product_unit_id' => $unitId,
-                    'price'           => $v['prices'][$unitId] ?? 0,
+                    'unit_id' => $unitId,
+                    'price'   => $v['prices'][$unitId] ?? 0,
                 ]);
             }
+            foreach (array_keys($v['modifier_enabled'] ?? []) as $modifierId) {
+                $variant->variantModifiers()->create([
+                    'modifier_id' => $modifierId,
+                    'price'       => $v['modifier_prices'][$modifierId] ?? 0,
+                ]);
+                if (isset($allModifiers[$modifierId])) {
+                    $modifierGroupIds[] = $allModifiers[$modifierId]->modifier_group_id;
+                }
+            }
         }
+        $explicitGroupIds = array_map('intval', $request->input('modifier_group_ids', []));
+        $product->modifierGroups()->sync(array_unique(array_merge($explicitGroupIds, $modifierGroupIds)));
 
         return redirect()->route('products.index')
             ->with('success', __('common.success_create', ['name' => __('product.product')]));
@@ -104,14 +129,17 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
-        $categories = ProductCategory::select('id', 'name')->orderBy('name')->get();
-        $units      = ProductUnit::select('id', 'name')->orderBy('name')->get();
+        $categories     = ProductCategory::select('id', 'name')->orderBy('name')->get();
+        $units          = Unit::select('id', 'name')->orderBy('name')->get();
+        $modifierGroups = ModifierGroup::with('modifiers')->orderBy('name')->get();
         $product->load([
             'units:id,name',
-            'variants' => fn ($q) => $q->select('id', 'product_id', 'name', 'sku', 'is_active'),
+            'modifierGroups:id,name',
+            'variants' => fn ($q) => $q->select('id', 'product_id', 'name', 'sku', 'barcode', 'is_stock_tracked', 'attributes', 'is_active'),
             'variants.prices',
+            'variants.variantModifiers',
         ]);
-        return view('products.form', compact('product', 'categories', 'units'));
+        return view('products.form', compact('product', 'categories', 'units', 'modifierGroups'));
     }
 
     public function update(Request $request, Product $product)
@@ -124,12 +152,16 @@ class ProductController extends Controller
             'min_price'            => 'required|numeric|min:0',
             'is_active'            => 'boolean',
             'unit_ids'             => 'nullable|array',
-            'unit_ids.*'           => 'integer|exists:product_units,id',
+            'unit_ids.*'           => 'integer|exists:units,id',
             'variants'             => 'nullable|array',
             'variants.*.name'      => 'required|string|max:100',
             'variants.*.sku'       => 'nullable|string|max:100',
+            'variants.*.barcode'   => 'nullable|string|max:100',
+            'variants.*.stock'     => 'nullable|numeric|min:0',
             'variants.*.prices'    => 'nullable|array',
             'variants.*.prices.*'  => 'nullable|numeric|min:0',
+            'modifier_group_ids'    => 'nullable|array',
+            'modifier_group_ids.*'  => 'integer|exists:modifier_groups,id',
             'deleted_variant_ids'   => 'nullable|array',
             'deleted_variant_ids.*' => 'nullable|integer',
         ]);
@@ -152,7 +184,7 @@ class ProductController extends Controller
         // Remove prices for units no longer attached to this product
         if ($unitIds) {
             ProductVariantPrice::whereHas('variant', fn ($q) => $q->where('product_id', $product->id))
-                ->whereNotIn('product_unit_id', $unitIds)
+                ->whereNotIn('unit_id', $unitIds)
                 ->delete();
         } else {
             ProductVariantPrice::whereHas('variant', fn ($q) => $q->where('product_id', $product->id))
@@ -160,12 +192,18 @@ class ProductController extends Controller
         }
 
         // Update existing or create new variants, then upsert prices
+        $allModifiers     = Modifier::select('id', 'modifier_group_id')->get()->keyBy('id');
+        $modifierGroupIds = [];
         foreach ($request->input('variants', []) as $v) {
             if (empty($v['name'])) continue;
             $data = [
-                'name'      => $v['name'],
-                'sku'       => $v['sku'] ?: null,
-                'is_active' => (bool) ($v['is_active'] ?? false),
+                'name'             => $v['name'],
+                'sku'              => $v['sku'] ?: null,
+                'barcode'          => !empty($v['barcode_auto']) ? $this->generateBarcode() : ($v['barcode'] ?: null),
+                'stock'            => $v['stock'] ?? 0,
+                'is_stock_tracked' => (bool) ($v['is_stock_tracked'] ?? false),
+                'attributes'       => !empty($v['attributes']) ? json_decode($v['attributes'], true) : null,
+                'is_active'        => (bool) ($v['is_active'] ?? false),
             ];
             if (!empty($v['id'])) {
                 ProductVariant::where('id', $v['id'])
@@ -179,11 +217,26 @@ class ProductController extends Controller
 
             foreach ($unitIds as $unitId) {
                 ProductVariantPrice::updateOrCreate(
-                    ['product_variant_id' => $variantId, 'product_unit_id' => $unitId],
+                    ['product_variant_id' => $variantId, 'unit_id' => $unitId],
                     ['price' => $v['prices'][$unitId] ?? 0]
                 );
             }
+
+            // Sync variant modifiers
+            ProductVariantModifier::where('product_variant_id', $variantId)->delete();
+            foreach (array_keys($v['modifier_enabled'] ?? []) as $modifierId) {
+                ProductVariantModifier::create([
+                    'product_variant_id' => $variantId,
+                    'modifier_id'        => $modifierId,
+                    'price'              => $v['modifier_prices'][$modifierId] ?? 0,
+                ]);
+                if (isset($allModifiers[$modifierId])) {
+                    $modifierGroupIds[] = $allModifiers[$modifierId]->modifier_group_id;
+                }
+            }
         }
+        $explicitGroupIds = array_map('intval', $request->input('modifier_group_ids', []));
+        $product->modifierGroups()->sync(array_unique(array_merge($explicitGroupIds, $modifierGroupIds)));
 
         return redirect()->route('products.index')
             ->with('success', __('common.success_update', ['name' => __('product.product')]));
@@ -195,5 +248,24 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')
             ->with('success', __('common.success_delete', ['name' => __('product.product')]));
+    }
+
+    private function generateBarcode(): string
+    {
+        do {
+            $partial = '200' . str_pad((string) random_int(0, 999999999), 9, '0', STR_PAD_LEFT);
+            $barcode = $partial . $this->ean13CheckDigit($partial);
+        } while (ProductVariant::where('barcode', $barcode)->exists());
+
+        return $barcode;
+    }
+
+    private function ean13CheckDigit(string $digits): int
+    {
+        $sum = 0;
+        for ($i = 0; $i < 12; $i++) {
+            $sum += (int) $digits[$i] * ($i % 2 === 0 ? 1 : 3);
+        }
+        return (10 - ($sum % 10)) % 10;
     }
 }

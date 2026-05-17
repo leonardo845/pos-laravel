@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', __('product.product_categories'))
+@section('title', __('product.units'))
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="mb-0">{{ __('product.product_categories') }}</h4>
-    <a href="{{ route('product-categories.create') }}" class="btn btn-primary btn-sm">
+    <h4 class="mb-0">{{ __('product.units') }}</h4>
+    <a href="{{ route('units.create') }}" class="btn btn-primary btn-sm">
         <i class="bi bi-plus-lg"></i> {{ __('common.add') }}
     </a>
 </div>
@@ -19,7 +19,7 @@
             </div>
             <div class="col-auto">
                 <button type="submit" class="btn btn-secondary btn-sm">{{ __('common.search') }}</button>
-                <a href="{{ route('product-categories.index') }}" class="btn btn-outline-secondary btn-sm">{{ __('common.reset') }}</a>
+                <a href="{{ route('units.index') }}" class="btn btn-outline-secondary btn-sm">{{ __('common.reset') }}</a>
             </div>
         </form>
 
@@ -33,13 +33,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($categories as $category)
+                    @forelse($units as $unit)
                     <tr>
-                        <td>{{ $categories->firstItem() + $loop->index }}</td>
-                        <td>{{ $category->name }}</td>
+                        <td>{{ $units->firstItem() + $loop->index }}</td>
+                        <td>{{ $unit->name }}</td>
                         <td>
-                            <a href="{{ route('product-categories.edit', $category) }}" class="btn btn-warning btn-sm">{{ __('common.edit') }}</a>
-                            <form method="POST" action="{{ route('product-categories.destroy', $category) }}" class="d-inline"
+                            <a href="{{ route('units.edit', $unit) }}" class="btn btn-warning btn-sm">{{ __('common.edit') }}</a>
+                            <form method="POST" action="{{ route('units.destroy', $unit) }}" class="d-inline"
                                   onsubmit="return confirm('{{ __('common.confirm_delete') }}')">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm">{{ __('common.delete') }}</button>
@@ -53,7 +53,7 @@
             </table>
         </div>
 
-        {{ $categories->links() }}
+        {{ $units->links() }}
     </div>
 </div>
 @endsection

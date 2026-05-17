@@ -16,4 +16,12 @@ return [
     'sell_price'         => 'Harga Jual',
     'min_price'          => 'Harga Minimum',
     'max_price'          => 'Harga Maksimum',
+    'variant_prices'     => 'Harga Varian',
+    'barcode'            => 'Barcode',
+    'barcode_auto'       => 'Dibuat otomatis',
+    'stock'              => 'Stok',
+    'track_stock'        => 'Lacak Stok',
+    'attributes'         => 'Atribut',
+    'modifier_groups'         => 'Opsi Tambahan',
+    'select_modifier_group'   => 'Pilih Grup Opsi',
 ];

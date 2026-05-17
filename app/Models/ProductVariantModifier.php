@@ -4,13 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ProductVariantPrice extends Model
+class ProductVariantModifier extends Model
 {
-    protected $fillable = [
-        'product_variant_id',
-        'unit_id',
-        'price',
-    ];
+    protected $fillable = ['product_variant_id', 'modifier_id', 'price'];
 
     protected $casts = [
         'price' => 'decimal:2',
@@ -21,8 +17,8 @@ class ProductVariantPrice extends Model
         return $this->belongsTo(ProductVariant::class, 'product_variant_id');
     }
 
-    public function unit()
+    public function modifier()
     {
-        return $this->belongsTo(Unit::class, 'unit_id');
+        return $this->belongsTo(Modifier::class);
     }
 }
